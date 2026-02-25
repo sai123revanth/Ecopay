@@ -2,409 +2,460 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import numpy as np
+import json
+import os
+from groq import Groq
 
 # -----------------------------------------------------------------------------
-# 1. PAGE CONFIGURATION & PREMIUM STYLING
+# 1. PAGE CONFIGURATION & STYLING
 # -----------------------------------------------------------------------------
 st.set_page_config(
-    page_title="EcoInvest | Corporate Emissions Liability",
-    page_icon="🏭",
+    page_title="Ecopay | Carbon Intelligence",
+    page_icon="🌍",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# Shared "Eco-FinTech" Design System - Adapted for Corporate Risk Warning
+# Shared "Eco-FinTech" Design System (Reused & Expanded)
 st.markdown("""
 <style>
-    /* Global App Styling - Professional Dark Finance Theme */
+    /* Global App Styling */
     .stApp {
-        background: linear-gradient(160deg, #0a0e17 0%, #1a0f14 45%, #2a0808 100%);
+        background: linear-gradient(160deg, #02040a 0%, #062c1b 45%, #0d5c3b 100%);
         background-attachment: fixed;
-        color: #e2e8f0;
+        color: #fafafa;
     }
     
-    /* Heading Adjustments */
-    .stApp h1 {
-        font-family: 'Inter', 'Segoe UI', sans-serif;
-        color: #ffffff;
-        font-size: 2.4rem !important;
+    /* Headers */
+    h1 {
+        font-family: 'Inter', sans-serif;
+        font-size: 2.8rem;
         font-weight: 800;
-        letter-spacing: -0.5px;
+        letter-spacing: -1px;
+        background: -webkit-linear-gradient(#fff, #aaa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0rem;
     }
     
-    .stApp h2, .stApp h3, .stApp h4 {
-        font-family: 'Inter', 'Segoe UI', sans-serif;
-        color: #f8fafc;
-        font-weight: 600;
+    h2, h3, h4 {
+        font-family: 'Inter', sans-serif;
+        color: white;
+        font-weight: 700;
     }
 
-    /* Advanced KPI Card Container */
-    .kpi-card {
-        background: rgba(15, 23, 42, 0.7);
+    /* Glassmorphism Cards */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(239, 68, 68, 0.2); /* Red warning border */
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        margin-bottom: 15px;
-        border-left: 4px solid #ef4444;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        margin-bottom: 20px;
+        transition: transform 0.3s ease, border-color 0.3s ease;
     }
-    
-    .kpi-title {
-        color: #94a3b8;
-        font-size: 0.95rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 10px;
-    }
-    
-    .kpi-value {
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: #f8fafc;
-        font-family: 'Courier New', Courier, monospace;
-    }
-    
-    .kpi-sub {
-        color: #ef4444;
-        font-size: 0.85rem;
-        font-weight: bold;
-        margin-top: 5px;
-    }
-
-    /* Risk Profile Container */
-    .risk-container {
-        background: rgba(15, 23, 42, 0.8);
-        border-radius: 12px;
-        padding: 25px;
-        border: 1px solid rgba(148, 163, 184, 0.1);
-        margin-top: 20px;
-    }
-
-    .risk-badge {
-        background-color: rgba(239, 68, 68, 0.2); 
-        color: #fca5a5; 
-        border: 1px solid #ef4444;
-        padding: 4px 10px;
-        border-radius: 4px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        margin-right: 8px;
-        display: inline-block;
-        margin-bottom: 10px;
-    }
-
-    .info-badge {
-        background-color: rgba(56, 189, 248, 0.1); 
-        color: #7dd3fc; 
-        border: 1px solid #38bdf8;
-        padding: 4px 10px;
-        border-radius: 4px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        margin-right: 8px;
-    }
-
-    /* Custom Table Styling */
-    .dataframe {
-        width: 100%;
-        color: white;
-    }
-    
-    /* Buttons */
-    div.stButton > button:first-child {
-        background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
-        color: white;
-        border: none;
-        border-radius: 6px;
-        font-weight: 600;
-        width: 100%;
-        transition: all 0.3s;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-    div.stButton > button:first-child:hover {
-        background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+    .glass-card:hover {
+        border-color: rgba(0, 210, 106, 0.5);
         transform: translateY(-2px);
     }
+
+    /* Metric Highlights */
+    .metric-value {
+        font-size: 3.5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #00d26a, #96c93d);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1.1;
+    }
+    .metric-label {
+        color: #aaa;
+        font-size: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Timeline Styling */
+    .timeline-item {
+        border-left: 3px solid #00d26a;
+        padding-left: 20px;
+        margin-bottom: 20px;
+        position: relative;
+    }
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        width: 15px;
+        height: 15px;
+        background: #02040a;
+        border: 3px solid #00d26a;
+        border-radius: 50%;
+        left: -9px;
+        top: 0;
+    }
+
+    /* Chat Styling */
+    .chat-header {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #00d26a;
+        margin-bottom: 10px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding-bottom: 10px;
+    }
+
+    /* Button Styling */
+    .stButton>button {
+        background: linear-gradient(135deg, #00b09b, #96c93d) !important;
+        color: #02040a !important;
+        font-weight: bold !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 10px 24px !important;
+        transition: all 0.3s ease !important;
+        width: 100%;
+        margin-top: 20px;
+    }
+    .stButton>button:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 20px rgba(0, 210, 106, 0.4) !important;
+    }
+
 </style>
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# 2. DATA GENERATION (Top 20 Indian Corporate Polluters)
+# 2. GROQ API INTEGRATION
 # -----------------------------------------------------------------------------
 
-@st.cache_data
-def load_corporate_data():
+def get_groq_client():
+    """Attempt to initialize the Groq client using 'New_API' key."""
+    api_key = None
+    if "New_API" in st.secrets:
+        api_key = st.secrets["New_API"]
+    elif "New_API" in os.environ:
+        api_key = os.environ["New_API"]
+    
+    if api_key:
+        return Groq(api_key=api_key)
+    return None
+
+def generate_eco_profile(data):
+    """Calls Groq API to generate the carbon analysis and action plan."""
+    client = get_groq_client()
+    
+    prompt = f"""
+    You are an expert environmental data scientist and sustainability coach. 
+    Analyze the following user lifestyle data and provide a highly personalized carbon footprint analysis.
+    
+    USER DATA:
+    - Transport: {data['transport']}
+    - Diet: {data['diet']}
+    - Energy: {data['energy']}
+    - Shopping: {data['shopping']}
+    
+    Return ONLY a valid JSON object with the exact following structure, no markdown, no extra text:
+    {{
+        "total_carbon_tons": <float, estimated annual CO2 tons>,
+        "comparison_to_average": "<string, e.g., '20% below average'>",
+        "breakdown": {{
+            "Transport": <int, percentage>,
+            "Diet": <int, percentage>,
+            "Energy": <int, percentage>,
+            "Shopping": <int, percentage>
+        }},
+        "improvements": [
+            {{
+                "title": "<string, catchy title>",
+                "impact": "<string, estimated CO2 saved>",
+                "description": "<string, realistic explanation>"
+            }},
+            // exactly 3 realistic improvements
+        ],
+        "action_plan_30_days": [
+            {{"week": "Week 1", "focus": "<string>", "action": "<string>"}},
+            {{"week": "Week 2", "focus": "<string>", "action": "<string>"}},
+            {{"week": "Week 3", "focus": "<string>", "action": "<string>"}},
+            {{"week": "Week 4", "focus": "<string>", "action": "<string>"}}
+        ]
+    }}
     """
-    Simulates the emissions database for the Top 20 largest Indian corporate polluters.
-    Numbers are scaled to believable absolute values (Millions/Billions of kg) to match the SIP scale.
-    """
-    data = [
-        {"Rank": 1, "Company": "NTPC Limited", "Sector": "Power Generation", "Annual_Emissions_kg": 850000000, "Country": "India"},
-        {"Rank": 2, "Company": "Reliance Industries", "Sector": "Petrochemicals", "Annual_Emissions_kg": 720000000, "Country": "India"},
-        {"Rank": 3, "Company": "Tata Steel", "Sector": "Manufacturing", "Annual_Emissions_kg": 680000000, "Country": "India"},
-        {"Rank": 4, "Company": "Coal India Ltd", "Sector": "Mining", "Annual_Emissions_kg": 610000000, "Country": "India"},
-        {"Rank": 5, "Company": "Adani Power", "Sector": "Power Generation", "Annual_Emissions_kg": 590000000, "Country": "India"},
-        {"Rank": 6, "Company": "Indian Oil Corp (IOCL)", "Sector": "Oil & Gas", "Annual_Emissions_kg": 540000000, "Country": "India"},
-        {"Rank": 7, "Company": "JSW Steel", "Sector": "Manufacturing", "Annual_Emissions_kg": 490000000, "Country": "India"},
-        {"Rank": 8, "Company": "UltraTech Cement", "Sector": "Construction Materials", "Annual_Emissions_kg": 460000000, "Country": "India"},
-        {"Rank": 9, "Company": "ONGC", "Sector": "Oil & Gas", "Annual_Emissions_kg": 420000000, "Country": "India"},
-        {"Rank": 10, "Company": "Vedanta Limited", "Sector": "Mining & Metals", "Annual_Emissions_kg": 390000000, "Country": "India"},
-        {"Rank": 11, "Company": "Hindalco Industries", "Sector": "Metals", "Annual_Emissions_kg": 350000000, "Country": "India"},
-        {"Rank": 12, "Company": "Bharat Petroleum (BPCL)", "Sector": "Oil & Gas", "Annual_Emissions_kg": 310000000, "Country": "India"},
-        {"Rank": 13, "Company": "Hindustan Petroleum (HPCL)", "Sector": "Oil & Gas", "Annual_Emissions_kg": 280000000, "Country": "India"},
-        {"Rank": 14, "Company": "Ambuja Cements", "Sector": "Construction Materials", "Annual_Emissions_kg": 250000000, "Country": "India"},
-        {"Rank": 15, "Company": "Larsen & Toubro (L&T)", "Sector": "Construction & Engg", "Annual_Emissions_kg": 210000000, "Country": "India"},
-        {"Rank": 16, "Company": "Grasim Industries", "Sector": "Textiles & Chemicals", "Annual_Emissions_kg": 180000000, "Country": "India"},
-        {"Rank": 17, "Company": "Tata Motors", "Sector": "Automotive", "Annual_Emissions_kg": 150000000, "Country": "India"},
-        {"Rank": 18, "Company": "Mahindra & Mahindra", "Sector": "Automotive", "Annual_Emissions_kg": 120000000, "Country": "India"},
-        {"Rank": 19, "Company": "Shree Cement", "Sector": "Construction Materials", "Annual_Emissions_kg": 95000000, "Country": "India"},
-        {"Rank": 20, "Company": "Maruti Suzuki", "Sector": "Automotive", "Annual_Emissions_kg": 75000000, "Country": "India"}
-    ]
-    
-    df = pd.DataFrame(data)
-    
-    # CALCULATIONS
-    # Safe Target: Corporate compliance requires a 45% reduction from baseline
-    df['Safe_Target_kg'] = df['Annual_Emissions_kg'] * 0.55
-    
-    # Credits Needed: The deficit they must purchase to avoid fines
-    df['Credits_Needed_kg'] = df['Annual_Emissions_kg'] - df['Safe_Target_kg']
-    
-    # Financial Liability: Assume a domestic carbon tax / credit market price of ₹1.5 per kg
-    market_price_per_kg = 1.50
-    df['Financial_Liability_INR'] = df['Credits_Needed_kg'] * market_price_per_kg
-    
-    return df
 
-df_corps = load_corporate_data()
+    if not client:
+        return get_mock_response()
+
+    try:
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile", 
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.3, 
+            response_format={"type": "json_object"}
+        )
+        return json.loads(response.choices[0].message.content)
+    except Exception as e:
+        st.error(f"API Error: {str(e)}. Using fallback data.")
+        return get_mock_response()
+
+def chat_with_assistant(messages):
+    """Handles multilingual chat queries via Groq."""
+    client = get_groq_client()
+    
+    system_prompt = {
+        "role": "system",
+        "content": "You are a highly professional Eco-FinTech AI assistant. You must converse naturally in ANY Indian language the user prefers (e.g., Hindi, Tamil, Telugu, Bengali, Marathi, etc.) as well as English. Your goal is to guide the user through a personal carbon footprint assessment by asking exactly 10 questions about their transportation, diet, energy, and shopping habits. CRITICAL RULES: 1. Ask ONLY ONE question at a time. 2. Wait for the user's response before asking the next question. 3. Adapt to their language immediately. 4. After 10 questions, provide a professional summary and actionable footprint estimate."
+    }
+    
+    full_messages = [system_prompt] + messages
+    
+    if not client:
+        return "मुझे क्षमा करें (I apologize), the AI API key is missing. I am currently running in offline mock mode. कृपया बाद में पुनः प्रयास करें।"
+        
+    try:
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=full_messages,
+            temperature=0.7,
+            max_tokens=300
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"System Offline: Unable to process the request due to {str(e)}."
+
+def get_mock_response():
+    """Provides structured realistic data if Groq API fails or key is missing."""
+    return {
+        "total_carbon_tons": 8.4,
+        "comparison_to_average": "15% above global average",
+        "breakdown": {
+            "Transport": 45,
+            "Diet": 25,
+            "Energy": 20,
+            "Shopping": 10
+        },
+        "improvements": [
+            {
+                "title": "Adopt a Hybrid Commute",
+                "impact": "Save 1.2 tons/yr",
+                "description": "Replacing just two days of driving with public transit or work-from-home reduces your transport footprint significantly."
+            },
+            {
+                "title": "Plant-Based Weekends",
+                "impact": "Save 0.6 tons/yr",
+                "description": "Cutting out red meat specifically on weekends slashes your diet-related methane footprint without requiring a full lifestyle shift."
+            },
+            {
+                "title": "Vampire Energy Purge",
+                "impact": "Save 0.3 tons/yr",
+                "description": "Using smart power strips to cut power to dormant electronics (TVs, chargers, consoles) stops passive energy drain."
+            }
+        ],
+        "action_plan_30_days": [
+            {"week": "Week 1", "focus": "Audit & Awareness", "action": "Calculate your baseline and unplug all unused electronics. Set up recycling bins clearly."},
+            {"week": "Week 2", "focus": "Dietary Shifts", "action": "Meal prep 3 fully vegetarian days. Source groceries from local farmers markets if possible."},
+            {"week": "Week 3", "focus": "Mobility Change", "action": "Take public transport, walk, or carpool for at least 50% of your total weekly journeys."},
+            {"week": "Week 4", "focus": "Sustainable Consumption", "action": "Cancel unnecessary physical subscriptions. Commit to buying zero new clothing this month."}
+        ]
+    }
 
 # -----------------------------------------------------------------------------
-# 3. HELPER TEXTS & RISK PROFILES
+# 3. UI COMPONENTS
 # -----------------------------------------------------------------------------
 
-def get_risk_profile(company_name, sector):
-    """Generates a professional problem statement contextualized for the Indian market."""
-    
-    base_problems = f"""
-    **{company_name}** is currently operating vastly outside the parameters of India's Net Zero 2070 commitments. As a heavy emitter in the {sector} sector, their excessive carbon footprint exposes them to severe local and global risks:
-    
-    **1. SEBI BRSR & Regulatory Fines:**
-    With the mandate of SEBI's Business Responsibility and Sustainability Reporting (BRSR), exact emissions are now public. Future implementation of the Indian Carbon Market (ICM) will levy direct financial penalties for every kilogram of CO₂ emitted above their allowance.
-    
-    **2. Stranded Assets & Export Tariffs:**
-    As the European Union strictly enforces the Carbon Border Adjustment Mechanism (CBAM), {company_name}'s exports will face massive "carbon taxes" at international borders, rendering their products uncompetitive globally.
-    
-    **3. ESG Capital Divestment:**
-    Domestic mutual funds and international Foreign Institutional Investors (FIIs) are heavily screening for ESG compliance. Failure to offset this deficit drastically increases their cost of borrowing and limits capital expansion.
-    
-    **4. Ecopay B2B Solution:**
-    To avoid these billions in liabilities, {company_name} must immediately purchase aggregated carbon credits from retail platforms like **Ecopay**, effectively transferring wealth from polluting corporates to green retail investors.
-    """
-    return base_problems
+def plot_footprint_donut(breakdown):
+    labels = list(breakdown.keys())
+    values = list(breakdown.values())
+    colors = ['#00d26a', '#3dd5f3', '#ffc107', '#eb3349']
 
-def format_large_number(num):
-    """Formats large numbers into readable Billions/Millions."""
-    if num >= 1e9:
-        return f"{num / 1e9:.2f} Billion"
-    elif num >= 1e6:
-        return f"{num / 1e6:.2f} Million"
-    else:
-        return f"{num:,.0f}"
+    fig = go.Figure(data=[go.Pie(
+        labels=labels, 
+        values=values, 
+        hole=.6,
+        marker_colors=colors,
+        textinfo='label+percent',
+        textposition='outside',
+        textfont=dict(color='white')
+    )])
+
+    fig.update_layout(
+        showlegend=False,
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        margin=dict(t=0, b=0, l=0, r=0),
+        height=300,
+        annotations=[dict(text='CO₂e', x=0.5, y=0.5, font_size=24, showarrow=False, font_color='white')]
+    )
+    return fig
+
+@st.dialog("💬 Multilingual AI Sustainability Coach", width="large")
+def chat_popup():
+    st.markdown("<p style='color:#aaa;'>I will ask you 10 questions to track your carbon footprint. Speak in any Indian language!</p>", unsafe_allow_html=True)
+    
+    chat_container = st.container(height=500, border=False)
+    
+    with chat_container:
+        for message in st.session_state.messages:
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
+    
+    prompt = st.chat_input("Ask me anything in Hindi, Tamil, English...")
+    if prompt:
+        # Add user message
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with chat_container:
+            with st.chat_message("user"):
+                st.markdown(prompt)
+        
+        # Get AI response
+        with chat_container:
+            with st.chat_message("assistant"):
+                with st.spinner("Thinking..."):
+                    api_messages = [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages]
+                    response = chat_with_assistant(api_messages)
+                    st.markdown(response)
+        
+        # Add AI response to state
+        st.session_state.messages.append({"role": "assistant", "content": response})
+        st.rerun()
 
 # -----------------------------------------------------------------------------
-# 4. MAIN DASHBOARD LAYOUT
+# 4. MAIN APPLICATION
 # -----------------------------------------------------------------------------
 
 def main():
-    # --- HEADER ---
-    col1, col2 = st.columns([7, 3])
-    with col1:
-        st.title("Indian Corporate Liability Radar")
-        st.markdown("##### Tracking the Top 20 Indian Polluters & Their Carbon Credit Deficits")
-    with col2:
+    col_title, col_btn = st.columns([3, 1])
+    with col_title:
+        st.markdown("<h1>Personal Carbon Intelligence</h1>", unsafe_allow_html=True)
+        st.markdown("<p style='color:#aaa; font-size:1.1rem; margin-bottom:30px;'>Quantify your lifestyle impact, chat with our multilingual AI, and generate a realistic path to Net-Zero.</p>", unsafe_allow_html=True)
+    with col_btn:
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("🌐 Route to Retail SIP Portal"):
-            st.toast("Navigating to Retail Investment Portal...")
+        if st.button("💬 Open AI Chat Coach", use_container_width=True):
+            chat_popup()
 
-    st.markdown("---")
+    # State management
+    if 'report_generated' not in st.session_state:
+        st.session_state.report_generated = False
+    if 'report_data' not in st.session_state:
+        st.session_state.report_data = None
+    if "messages" not in st.session_state:
+        st.session_state.messages = [
+            {"role": "assistant", "content": "नमस्ते! Namaste! Hello! I am your Eco-FinTech Assistant. I will ask you 10 simple questions to track your carbon footprint. In which language would you like to proceed?"}
+        ]
 
-    # --- KPI ROW ---
-    total_emissions = df_corps['Annual_Emissions_kg'].sum()
-    total_deficit = df_corps['Credits_Needed_kg'].sum()
-    total_liability = df_corps['Financial_Liability_INR'].sum()
-
-    k1, k2, k3 = st.columns(3)
+    # --- MAIN DASHBOARD LAYOUT ---
+    st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
+    st.markdown("### 📋 Complete Your Comprehensive Eco-Profile")
+    st.markdown("<hr style='border-color: rgba(255,255,255,0.1); margin: 15px 0;'>", unsafe_allow_html=True)
     
-    with k1:
-        st.markdown(f"""
-        <div class="kpi-card">
-            <div class="kpi-title">Top 20 Total Emissions</div>
-            <div class="kpi-value">{format_large_number(total_emissions)} <span style="font-size:1rem; color:#94a3b8;">kg CO₂e</span></div>
-            <div class="kpi-sub">Critical BRSR threshold exceeded</div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-    with k2:
-        st.markdown(f"""
-        <div class="kpi-card">
-            <div class="kpi-title">Domestic Credit Deficit</div>
-            <div class="kpi-value">{format_large_number(total_deficit)} <span style="font-size:1rem; color:#94a3b8;">kg</span></div>
-            <div class="kpi-sub">Volume needed to achieve safe limits</div>
-        </div>
-        """, unsafe_allow_html=True)
+    user_data = {}
+    
+    # 1. Transport Section
+    st.markdown("<h4 style='color:#00d26a;'>🚗 Transportation Habits</h4>", unsafe_allow_html=True)
+    t_c1, t_c2 = st.columns(2)
+    with t_c1:
+        commute_type = st.selectbox("Primary Commute Method", ["Gas/Petrol Car", "Diesel Car", "Hybrid Car", "EV", "Motorcycle", "Public Transit", "Bicycle/Walking"])
+    with t_c2:
+        flights = st.selectbox("Air Travel (Annual)", ["None", "1-2 Short Flights", "3-5 Flights", "Frequent Flyer (6+ flights)", "Long-Haul International"])
+    weekly_miles = st.slider("Weekly Commute Distance (Miles/Km equivalent)", 0, 500, 100)
+    user_data['transport'] = f"Method: {commute_type}, Distance: {weekly_miles}/wk, Flights: {flights}"
+    
+    st.markdown("<br>", unsafe_allow_html=True)
 
-    with k3:
-        st.markdown(f"""
-        <div class="kpi-card">
-            <div class="kpi-title">Total Financial Liability</div>
-            <div class="kpi-value">₹ {format_large_number(total_liability)}</div>
-            <div class="kpi-sub">Estimated cost to offset at ₹1.5/kg</div>
-        </div>
-        """, unsafe_allow_html=True)
+    # 2. Diet Section
+    st.markdown("<h4 style='color:#00d26a;'>🥗 Diet Patterns</h4>", unsafe_allow_html=True)
+    d_c1, d_c2 = st.columns(2)
+    with d_c1:
+        diet_type = st.selectbox("Primary Diet", ["Heavy Meat Eater (Daily)", "Average (Meat 3-4x/week)", "Pescatarian", "Vegetarian", "Vegan"])
+    with d_c2:
+        food_source = st.selectbox("Food Sourcing", ["Mostly Supermarket (Imported)", "Mix of Supermarket & Local", "Mostly Local/Farmers Market"])
+    user_data['diet'] = f"Type: {diet_type}, Sourcing: {food_source}"
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # 3. Energy Section
+    st.markdown("<h4 style='color:#00d26a;'>⚡ Energy Consumption</h4>", unsafe_allow_html=True)
+    e_c1, e_c2 = st.columns(2)
+    with e_c1:
+        home_type = st.selectbox("Home Type", ["Apartment (1-2 beds)", "Medium House (3 beds)", "Large House (4+ beds)"])
+        hvac = st.checkbox("Heavy Air Conditioning / Heating Usage", value=True)
+    with e_c2:
+        energy_source = st.selectbox("Energy Grid Setup", ["Standard Grid (Fossil Heavy)", "Mixed Grid", "100% Renewable Tariff / Solar"])
+    user_data['energy'] = f"Home: {home_type}, Heavy HVAC: {hvac}, Source: {energy_source}"
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # --- GRAPHICAL ANALYSIS ---
-    st.subheader("📊 Emissions Distribution & Credit Deficit")
-    
-    g_col1, g_col2 = st.columns([1, 1])
-    
-    with g_col1:
-        # Treemap of Emissions
-        fig_tree = px.treemap(
-            df_corps, 
-            path=['Sector', 'Company'], 
-            values='Annual_Emissions_kg',
-            color='Annual_Emissions_kg',
-            color_continuous_scale='Reds',
-            title="Emission Weight by Sector & Company"
-        )
-        fig_tree.update_layout(
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            font_color="white",
-            margin=dict(t=40, l=10, r=10, b=10)
-        )
-        st.plotly_chart(fig_tree, use_container_width=True)
+    # 4. Shopping Section
+    st.markdown("<h4 style='color:#00d26a;'>🛍️ Shopping Behavior</h4>", unsafe_allow_html=True)
+    s_c1, s_c2 = st.columns(2)
+    with s_c1:
+        fashion = st.selectbox("Clothing Purchases", ["Frequent Fast Fashion", "Occasional Mainstream Brands", "Mostly Second-hand/Thrift", "Sustainable Brands Only"])
+    with s_c2:
+        tech = st.selectbox("Tech Replacement Rate", ["Upgrade yearly", "Upgrade every 2-3 years", "Use until broken"])
+    user_data['shopping'] = f"Fashion: {fashion}, Tech: {tech}"
 
-    with g_col2:
-        # Bar chart showing Current vs Target
-        fig_bar = go.Figure()
-        fig_bar.add_trace(go.Bar(
-            x=df_corps['Company'][:10], # Top 10 for clarity
-            y=df_corps['Annual_Emissions_kg'][:10],
-            name='Current Emissions',
-            marker_color='#ef4444'
-        ))
-        fig_bar.add_trace(go.Bar(
-            x=df_corps['Company'][:10],
-            y=df_corps['Safe_Target_kg'][:10],
-            name='Safe Target Limit',
-            marker_color='#10b981'
-        ))
-        fig_bar.update_layout(
-            title="Top 10: Current Emissions vs. Safe Limits (kg)",
-            barmode='overlay',
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            font_color="white",
-            margin=dict(t=40, l=10, r=10, b=10)
-        )
-        st.plotly_chart(fig_bar, use_container_width=True)
+    # Generate Report Button
+    if st.button("Generate AI Intelligence Report 🚀"):
+        with st.spinner("Initializing Groq AI... Crunching your ecosystem data..."):
+            st.session_state.report_data = generate_eco_profile(user_data)
+            st.session_state.report_generated = True
 
-    st.markdown("---")
+    st.markdown("</div>", unsafe_allow_html=True) # End form glass card
 
-    # --- DEEP DIVE & PROBLEM STATEMENT ---
-    st.subheader("🏢 Corporate Deep Dive & Risk Analysis")
-    st.markdown("Select a specific corporation to view their operational deficit and exact risk profile.")
-    
-    dd_col1, dd_col2 = st.columns([1, 2])
-    
-    with dd_col1:
-        st.markdown('<div class="risk-container" style="padding:15px;">', unsafe_allow_html=True)
-        selected_company = st.selectbox("Select Top 20 Polluter", df_corps['Company'].tolist())
+    # --- FULL WIDTH RESULTS SECTION ---
+    if st.session_state.report_generated and st.session_state.report_data:
+        data = st.session_state.report_data
         
-        # Get company specific data
-        c_data = df_corps[df_corps['Company'] == selected_company].iloc[0]
+        st.markdown("<hr style='border-color: rgba(255,255,255,0.1); margin: 40px 0;'>", unsafe_allow_html=True)
+        st.markdown("<h2>📊 Your Environmental Ledger</h2>", unsafe_allow_html=True)
         
-        st.markdown(f"### {c_data['Company']}")
-        st.markdown(f"<span class='info-badge'>📍 {c_data['Country']}</span> <span class='info-badge'>🏭 {c_data['Sector']}</span>", unsafe_allow_html=True)
+        # Top Row: Score & Donut
+        col_score, col_chart = st.columns([1, 1.5])
         
-        st.markdown("<hr style='border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
-        st.markdown(f"**Gross Emissions:**<br><span style='color:#ef4444; font-size:1.4rem; font-weight:bold;'>{c_data['Annual_Emissions_kg']:,.0f} kg</span>", unsafe_allow_html=True)
-        
-        st.markdown(f"**Target Safe Limit:**<br><span style='color:#10b981; font-size:1.4rem; font-weight:bold;'>{c_data['Safe_Target_kg']:,.0f} kg</span>", unsafe_allow_html=True)
-        
-        st.markdown("<hr style='border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
-        st.markdown(f"**Credits Required (Deficit):**<br><span style='color:#fbbf24; font-size:1.6rem; font-weight:bold;'>{c_data['Credits_Needed_kg']:,.0f} kg</span>", unsafe_allow_html=True)
-        
-        st.markdown(f"**Financial Liability:**<br><span style='color:#f8fafc; font-size:1.4rem; font-weight:bold;'>₹{c_data['Financial_Liability_INR']:,.0f}</span>", unsafe_allow_html=True)
-        
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button(f"Force B2B Credit Purchase"):
-            st.success(f"Initiated massive B2B block trade request to Ecopay Treasury to offset {format_large_number(c_data['Credits_Needed_kg'])} kg for {c_data['Company']}.")
-        
-        st.markdown('</div>', unsafe_allow_html=True)
+        with col_score:
+            st.markdown(f"""
+            <div class='glass-card' style='text-align: center; padding: 40px 20px;'>
+                <div class='metric-label'>Annual Carbon Footprint</div>
+                <div class='metric-value'>{data['total_carbon_tons']} <span style='font-size:1.5rem; color:#fff;'>Tons</span></div>
+                <div style='color: #ffc107; font-weight: bold; margin-top: 10px;'>{data['comparison_to_average']}</div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+        with col_chart:
+            st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
+            st.markdown("<h4 style='text-align:center; margin-bottom:0;'>Emissions Breakdown</h4>", unsafe_allow_html=True)
+            st.plotly_chart(plot_footprint_donut(data['breakdown']), use_container_width=True)
+            st.markdown("</div>", unsafe_allow_html=True)
 
-    with dd_col2:
-        st.markdown('<div class="risk-container">', unsafe_allow_html=True)
-        st.markdown(f"### Problem Statement & Liability Assessment")
-        st.markdown("<span class='risk-badge'>Regulatory High Risk</span> <span class='risk-badge'>CBAM Export Threat</span>", unsafe_allow_html=True)
+        # Middle Row: AI Suggested Improvements
+        st.markdown("### 💡 High-Yield Strategic Improvements")
+        st.markdown("<p style='color:#aaa;'>Algorithms have identified the lowest-friction, highest-impact changes based on your specific profile.</p>", unsafe_allow_html=True)
         
-        # Display the custom risk profile text
-        st.markdown(get_risk_profile(c_data['Company'], c_data['Sector']))
-        
-        # Gauge Chart for Risk Meter
-        fig_gauge = go.Figure(go.Indicator(
-            mode = "gauge+number",
-            value = (c_data['Annual_Emissions_kg'] / total_emissions) * 100,
-            domain = {'x': [0, 1], 'y': [0, 1]},
-            title = {'text': "Share of Top 20 Indian Emissions (%)", 'font': {'color': 'white'}},
-            gauge = {
-                'axis': {'range': [None, 15], 'tickcolor': "white"},
-                'bar': {'color': "#ef4444"},
-                'steps': [
-                    {'range': [0, 5], 'color': "rgba(16, 185, 129, 0.2)"},
-                    {'range': [5, 10], 'color': "rgba(251, 191, 36, 0.2)"},
-                    {'range': [10, 15], 'color': "rgba(239, 68, 68, 0.2)"}],
-            }
-        ))
-        fig_gauge.update_layout(height=250, margin=dict(t=40, b=10, l=10, r=10), paper_bgcolor="rgba(0,0,0,0)", font_color="white")
-        st.plotly_chart(fig_gauge, use_container_width=True)
-        
-        st.markdown('</div>', unsafe_allow_html=True)
+        imp_cols = st.columns(3)
+        for i, imp in enumerate(data['improvements']):
+            with imp_cols[i]:
+                st.markdown(f"""
+                <div class='glass-card' style='height: 100%;'>
+                    <h4 style='color: #00d26a; margin-top:0;'>{imp['title']}</h4>
+                    <span style='background: rgba(0,210,106,0.2); color: #00d26a; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight:bold;'>{imp['impact']}</span>
+                    <p style='margin-top: 15px; font-size: 0.95rem; color: #ddd;'>{imp['description']}</p>
+                </div>
+                """, unsafe_allow_html=True)
 
-    # --- DATAFRAME EXPANDER ---
-    st.markdown("---")
-    with st.expander("🗄️ View Complete Corporate Emissions Ledger (Raw Data)", expanded=False):
-        # Formatting for display
-        df_display = df_corps.copy()
-        for col in ['Annual_Emissions_kg', 'Safe_Target_kg', 'Credits_Needed_kg']:
-            df_display[col] = df_display[col].apply(lambda x: f"{x:,.0f} kg")
-        df_display['Financial_Liability_INR'] = df_display['Financial_Liability_INR'].apply(lambda x: f"₹{x:,.0f}")
+        # Bottom Row: 30-Day Action Plan
+        st.markdown("<hr style='border-color: rgba(255,255,255,0.1); margin: 40px 0;'>", unsafe_allow_html=True)
+        st.markdown("<h2>🗓️ Your 30-Day Eco-Action Plan</h2>", unsafe_allow_html=True)
         
-        # Custom styling for the dataframe
-        st.dataframe(
-            df_display.set_index('Rank'),
-            use_container_width=True,
-            height=400
-        )
-
-    # --- EXTRA BOTTOM PADDING / SPACING ---
-    # Adding generous empty space at the bottom of the page
-    # This ensures the dashboard doesn't cut off abruptly
-    # and allows users to scroll comfortably past the last element.
-    # We use multiple breaks to ensure a clean, floating footer feel.
-    st.markdown("<br>" * 5, unsafe_allow_html=True)
-    st.markdown("<br>" * 5, unsafe_allow_html=True)
-    st.markdown("<br>" * 5, unsafe_allow_html=True)
+        st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
+        for week_plan in data['action_plan_30_days']:
+            st.markdown(f"""
+            <div class='timeline-item'>
+                <h4 style='margin: 0; color: white;'>{week_plan['week']}: <span style='color: #00d26a;'>{week_plan['focus']}</span></h4>
+                <p style='margin-top: 5px; color: #bbb; font-size: 1.05rem;'>{week_plan['action']}</p>
+            </div>
+            """, unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()

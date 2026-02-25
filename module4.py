@@ -189,7 +189,7 @@ def generate_eco_profile(data):
 
     try:
         response = client.chat.completions.create(
-            model="llama3-8b-8192", 
+            model="llama-3.3-70b-versatile", 
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3, 
             response_format={"type": "json_object"}
@@ -205,7 +205,7 @@ def chat_with_assistant(messages):
     
     system_prompt = {
         "role": "system",
-        "content": "You are a highly professional Eco-FinTech AI assistant. You must converse naturally in ANY Indian language the user prefers (e.g., Hindi, Tamil, Telugu, Bengali, Marathi, etc.) as well as English. Keep answers concise, actionable, and focused on sustainability, carbon footprint reduction, and eco-friendly habits."
+        "content": "You are a highly professional Eco-FinTech AI assistant. You must converse naturally in ANY Indian language the user prefers (e.g., Hindi, Tamil, Telugu, Bengali, Marathi, etc.) as well as English. Your goal is to guide the user through a personal carbon footprint assessment by asking exactly 10 questions about their transportation, diet, energy, and shopping habits. CRITICAL RULES: 1. Ask ONLY ONE question at a time. 2. Wait for the user's response before asking the next question. 3. Adapt to their language immediately. 4. After 10 questions, provide a professional summary and actionable footprint estimate."
     }
     
     full_messages = [system_prompt] + messages
@@ -215,7 +215,7 @@ def chat_with_assistant(messages):
         
     try:
         response = client.chat.completions.create(
-            model="llama3-8b-8192",
+            model="llama-3.3-70b-versatile",
             messages=full_messages,
             temperature=0.7,
             max_tokens=300
@@ -289,13 +289,50 @@ def plot_footprint_donut(breakdown):
     )
     return fig
 
+@st.dialog("💬 Multilingual AI Sustainability Coach", width="large")
+def chat_popup():
+    st.markdown("<p style='color:#aaa;'>I will ask you 10 questions to track your carbon footprint. Speak in any Indian language!</p>", unsafe_allow_html=True)
+    
+    chat_container = st.container(height=500, border=False)
+    
+    with chat_container:
+        for message in st.session_state.messages:
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
+    
+    prompt = st.chat_input("Ask me anything in Hindi, Tamil, English...")
+    if prompt:
+        # Add user message
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with chat_container:
+            with st.chat_message("user"):
+                st.markdown(prompt)
+        
+        # Get AI response
+        with chat_container:
+            with st.chat_message("assistant"):
+                with st.spinner("Thinking..."):
+                    api_messages = [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages]
+                    response = chat_with_assistant(api_messages)
+                    st.markdown(response)
+        
+        # Add AI response to state
+        st.session_state.messages.append({"role": "assistant", "content": response})
+        st.rerun()
+
 # -----------------------------------------------------------------------------
 # 4. MAIN APPLICATION
 # -----------------------------------------------------------------------------
 
 def main():
-    st.markdown("<h1>Personal Carbon Intelligence</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='color:#aaa; font-size:1.1rem; margin-bottom:30px;'>Quantify your lifestyle impact, chat with our multilingual AI, and generate a realistic path to Net-Zero.</p>", unsafe_allow_html=True)
+    col_title, col_btn = st.columns([3, 1])
+    with col_title:
+        st.markdown("<h1>Personal Carbon Intelligence</h1>", unsafe_allow_html=True)
+        st.markdown("<p style='color:#aaa; font-size:1.1rem; margin-bottom:30px;'>Quantify your lifestyle impact, chat with our multilingual AI, and generate a realistic path to Net-Zero.</p>", unsafe_allow_html=True)
+    with col_btn:
+        st.markdown("<br>", unsafe_allow_html=True)
+        if st.button("💬 Open AI Chat Coach", use_container_width=True):
+            chat_popup()
 
     # State management
     if 'report_generated' not in st.session_state:
@@ -304,107 +341,67 @@ def main():
         st.session_state.report_data = None
     if "messages" not in st.session_state:
         st.session_state.messages = [
-            {"role": "assistant", "content": "नमस्ते! Namaste! Hello! I am your Eco-FinTech Assistant. I can speak any Indian language. How can I help you reduce your carbon footprint today?"}
+            {"role": "assistant", "content": "नमस्ते! Namaste! Hello! I am your Eco-FinTech Assistant. I will ask you 10 simple questions to track your carbon footprint. In which language would you like to proceed?"}
         ]
 
-    # --- MAIN DASHBOARD LAYOUT (2 COLUMNS) ---
-    col_form, col_chat = st.columns([1.6, 1])
+    # --- MAIN DASHBOARD LAYOUT ---
+    st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
+    st.markdown("### 📋 Complete Your Comprehensive Eco-Profile")
+    st.markdown("<hr style='border-color: rgba(255,255,255,0.1); margin: 15px 0;'>", unsafe_allow_html=True)
+    
+    user_data = {}
+    
+    # 1. Transport Section
+    st.markdown("<h4 style='color:#00d26a;'>🚗 Transportation Habits</h4>", unsafe_allow_html=True)
+    t_c1, t_c2 = st.columns(2)
+    with t_c1:
+        commute_type = st.selectbox("Primary Commute Method", ["Gas/Petrol Car", "Diesel Car", "Hybrid Car", "EV", "Motorcycle", "Public Transit", "Bicycle/Walking"])
+    with t_c2:
+        flights = st.selectbox("Air Travel (Annual)", ["None", "1-2 Short Flights", "3-5 Flights", "Frequent Flyer (6+ flights)", "Long-Haul International"])
+    weekly_miles = st.slider("Weekly Commute Distance (Miles/Km equivalent)", 0, 500, 100)
+    user_data['transport'] = f"Method: {commute_type}, Distance: {weekly_miles}/wk, Flights: {flights}"
+    
+    st.markdown("<br>", unsafe_allow_html=True)
 
-    # LEFT COLUMN: THE FLATTENED QUESTIONNAIRE
-    with col_form:
-        st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
-        st.markdown("### 📋 Complete Your Comprehensive Eco-Profile")
-        st.markdown("<hr style='border-color: rgba(255,255,255,0.1); margin: 15px 0;'>", unsafe_allow_html=True)
-        
-        user_data = {}
-        
-        # 1. Transport Section
-        st.markdown("<h4 style='color:#00d26a;'>🚗 Transportation Habits</h4>", unsafe_allow_html=True)
-        t_c1, t_c2 = st.columns(2)
-        with t_c1:
-            commute_type = st.selectbox("Primary Commute Method", ["Gas/Petrol Car", "Diesel Car", "Hybrid Car", "EV", "Motorcycle", "Public Transit", "Bicycle/Walking"])
-        with t_c2:
-            flights = st.selectbox("Air Travel (Annual)", ["None", "1-2 Short Flights", "3-5 Flights", "Frequent Flyer (6+ flights)", "Long-Haul International"])
-        weekly_miles = st.slider("Weekly Commute Distance (Miles/Km equivalent)", 0, 500, 100)
-        user_data['transport'] = f"Method: {commute_type}, Distance: {weekly_miles}/wk, Flights: {flights}"
-        
-        st.markdown("<br>", unsafe_allow_html=True)
+    # 2. Diet Section
+    st.markdown("<h4 style='color:#00d26a;'>🥗 Diet Patterns</h4>", unsafe_allow_html=True)
+    d_c1, d_c2 = st.columns(2)
+    with d_c1:
+        diet_type = st.selectbox("Primary Diet", ["Heavy Meat Eater (Daily)", "Average (Meat 3-4x/week)", "Pescatarian", "Vegetarian", "Vegan"])
+    with d_c2:
+        food_source = st.selectbox("Food Sourcing", ["Mostly Supermarket (Imported)", "Mix of Supermarket & Local", "Mostly Local/Farmers Market"])
+    user_data['diet'] = f"Type: {diet_type}, Sourcing: {food_source}"
+    
+    st.markdown("<br>", unsafe_allow_html=True)
 
-        # 2. Diet Section
-        st.markdown("<h4 style='color:#00d26a;'>🥗 Diet Patterns</h4>", unsafe_allow_html=True)
-        d_c1, d_c2 = st.columns(2)
-        with d_c1:
-            diet_type = st.selectbox("Primary Diet", ["Heavy Meat Eater (Daily)", "Average (Meat 3-4x/week)", "Pescatarian", "Vegetarian", "Vegan"])
-        with d_c2:
-            food_source = st.selectbox("Food Sourcing", ["Mostly Supermarket (Imported)", "Mix of Supermarket & Local", "Mostly Local/Farmers Market"])
-        user_data['diet'] = f"Type: {diet_type}, Sourcing: {food_source}"
-        
-        st.markdown("<br>", unsafe_allow_html=True)
+    # 3. Energy Section
+    st.markdown("<h4 style='color:#00d26a;'>⚡ Energy Consumption</h4>", unsafe_allow_html=True)
+    e_c1, e_c2 = st.columns(2)
+    with e_c1:
+        home_type = st.selectbox("Home Type", ["Apartment (1-2 beds)", "Medium House (3 beds)", "Large House (4+ beds)"])
+        hvac = st.checkbox("Heavy Air Conditioning / Heating Usage", value=True)
+    with e_c2:
+        energy_source = st.selectbox("Energy Grid Setup", ["Standard Grid (Fossil Heavy)", "Mixed Grid", "100% Renewable Tariff / Solar"])
+    user_data['energy'] = f"Home: {home_type}, Heavy HVAC: {hvac}, Source: {energy_source}"
 
-        # 3. Energy Section
-        st.markdown("<h4 style='color:#00d26a;'>⚡ Energy Consumption</h4>", unsafe_allow_html=True)
-        e_c1, e_c2 = st.columns(2)
-        with e_c1:
-            home_type = st.selectbox("Home Type", ["Apartment (1-2 beds)", "Medium House (3 beds)", "Large House (4+ beds)"])
-            hvac = st.checkbox("Heavy Air Conditioning / Heating Usage", value=True)
-        with e_c2:
-            energy_source = st.selectbox("Energy Grid Setup", ["Standard Grid (Fossil Heavy)", "Mixed Grid", "100% Renewable Tariff / Solar"])
-        user_data['energy'] = f"Home: {home_type}, Heavy HVAC: {hvac}, Source: {energy_source}"
+    st.markdown("<br>", unsafe_allow_html=True)
 
-        st.markdown("<br>", unsafe_allow_html=True)
+    # 4. Shopping Section
+    st.markdown("<h4 style='color:#00d26a;'>🛍️ Shopping Behavior</h4>", unsafe_allow_html=True)
+    s_c1, s_c2 = st.columns(2)
+    with s_c1:
+        fashion = st.selectbox("Clothing Purchases", ["Frequent Fast Fashion", "Occasional Mainstream Brands", "Mostly Second-hand/Thrift", "Sustainable Brands Only"])
+    with s_c2:
+        tech = st.selectbox("Tech Replacement Rate", ["Upgrade yearly", "Upgrade every 2-3 years", "Use until broken"])
+    user_data['shopping'] = f"Fashion: {fashion}, Tech: {tech}"
 
-        # 4. Shopping Section
-        st.markdown("<h4 style='color:#00d26a;'>🛍️ Shopping Behavior</h4>", unsafe_allow_html=True)
-        s_c1, s_c2 = st.columns(2)
-        with s_c1:
-            fashion = st.selectbox("Clothing Purchases", ["Frequent Fast Fashion", "Occasional Mainstream Brands", "Mostly Second-hand/Thrift", "Sustainable Brands Only"])
-        with s_c2:
-            tech = st.selectbox("Tech Replacement Rate", ["Upgrade yearly", "Upgrade every 2-3 years", "Use until broken"])
-        user_data['shopping'] = f"Fashion: {fashion}, Tech: {tech}"
+    # Generate Report Button
+    if st.button("Generate AI Intelligence Report 🚀"):
+        with st.spinner("Initializing Groq AI... Crunching your ecosystem data..."):
+            st.session_state.report_data = generate_eco_profile(user_data)
+            st.session_state.report_generated = True
 
-        # Generate Report Button
-        if st.button("Generate AI Intelligence Report 🚀"):
-            with st.spinner("Initializing Groq AI... Crunching your ecosystem data..."):
-                st.session_state.report_data = generate_eco_profile(user_data)
-                st.session_state.report_generated = True
-
-        st.markdown("</div>", unsafe_allow_html=True) # End form glass card
-
-    # RIGHT COLUMN: MULTILINGUAL CHATBOT
-    with col_chat:
-        st.markdown("<div class='glass-card' style='height: 100%; min-height: 850px; display: flex; flex-direction: column;'>", unsafe_allow_html=True)
-        st.markdown("<div class='chat-header'>🤖 AI Sustainability Coach</div>", unsafe_allow_html=True)
-        
-        # Chat container (Scrollable)
-        chat_container = st.container(height=650, border=False)
-        
-        with chat_container:
-            for message in st.session_state.messages:
-                with st.chat_message(message["role"]):
-                    st.markdown(message["content"])
-        
-        # Chat Input
-        prompt = st.chat_input("Ask me anything in Hindi, Tamil, English...")
-        if prompt:
-            # 1. Add user message to state and display
-            st.session_state.messages.append({"role": "user", "content": prompt})
-            with chat_container:
-                with st.chat_message("user"):
-                    st.markdown(prompt)
-            
-            # 2. Get AI response
-            with chat_container:
-                with st.chat_message("assistant"):
-                    with st.spinner("Thinking..."):
-                        # Format message history for Groq
-                        api_messages = [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages]
-                        response = chat_with_assistant(api_messages)
-                        st.markdown(response)
-            
-            # 3. Add AI response to state
-            st.session_state.messages.append({"role": "assistant", "content": response})
-            
-        st.markdown("</div>", unsafe_allow_html=True) # End chat glass card
+    st.markdown("</div>", unsafe_allow_html=True) # End form glass card
 
     # --- FULL WIDTH RESULTS SECTION ---
     if st.session_state.report_generated and st.session_state.report_data:
