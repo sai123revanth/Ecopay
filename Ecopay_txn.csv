@@ -1,0 +1,201 @@
+Date,Time,Mode,Category,Subcategory,Note,Amount
+2025-11-26,06:25:21,Debit Card,Entertainment,Streaming,DMart,529.71
+2025-08-01,06:18:51,Credit Card,Utilities,Mobile Recharge,Amazon,1650.17
+2025-10-27,02:07:08,Cash,Groceries,Supermarket,Uber,4355.79
+2025-09-17,14:09:19,UPI,Transport,Fuel,Zomato,992.81
+2025-12-15,00:43:01,NetBanking,Food,Cafe,Petrol Pump,3316.8
+2026-01-12,04:28:03,NetBanking,Shopping,Accessories,Petrol Pump,4691.28
+2025-09-16,02:53:12,NetBanking,Entertainment,Streaming,Uber,794.0
+2026-01-20,06:25:20,NetBanking,Shopping,Electronics,Petrol Pump,2495.2
+2025-10-02,01:17:41,Cash,Utilities,Internet,Swiggy,1511.66
+2025-02-03,23:57:40,NetBanking,Groceries,Vegetables,Ola,3475.76
+2025-12-21,01:44:30,Cash,Shopping,Accessories,Amazon,3148.72
+2025-01-01,21:16:10,Credit Card,Groceries,Supermarket,Local Store,3901.66
+2025-07-11,07:13:46,UPI,Utilities,Water,Petrol Pump,234.71
+2025-11-24,14:39:36,Cash,Transport,Train,Amazon,2091.29
+2025-05-08,05:07:30,Debit Card,Shopping,Clothes,Amazon,1800.33
+2026-01-22,10:01:13,Credit Card,Utilities,Mobile Recharge,Amazon,1482.32
+2025-10-06,23:25:18,Cash,Shopping,Electronics,Local Store,3994.18
+2025-09-02,05:37:09,Credit Card,Transport,Train,Zomato,4921.62
+2026-01-24,09:05:19,Cash,Groceries,Supermarket,Uber,2524.87
+2025-02-02,06:54:06,Debit Card,Groceries,Vegetables,Local Store,3921.93
+2025-03-04,04:42:40,UPI,Groceries,Fruits,Zomato,2661.59
+2025-09-02,13:00:47,UPI,Utilities,Water,Ola,4539.3
+2026-01-30,12:07:26,Cash,Shopping,Accessories,Zomato,4633.3
+2025-01-12,11:51:54,UPI,Entertainment,Streaming,Swiggy,4321.02
+2025-04-26,18:38:20,Cash,Entertainment,Streaming,Local Store,2388.11
+2025-07-16,04:50:37,Credit Card,Shopping,Electronics,Ola,3676.07
+2026-01-20,23:35:46,UPI,Entertainment,Games,DMart,3239.93
+2025-01-31,14:01:41,Credit Card,Entertainment,Games,Zomato,4903.34
+2025-05-15,21:34:00,Cash,Transport,Train,Flipkart,3121.77
+2026-01-04,20:26:15,UPI,Entertainment,Games,Swiggy,472.43
+2025-04-12,00:35:11,UPI,Shopping,Electronics,Ola,272.52
+2026-01-10,00:01:41,Debit Card,Groceries,Supermarket,Reliance Smart,2992.19
+2025-04-12,14:48:16,Debit Card,Entertainment,Movies,Petrol Pump,3681.92
+2025-01-12,23:32:49,Debit Card,Entertainment,Movies,Swiggy,150.94
+2025-07-25,23:22:38,UPI,Shopping,Accessories,Reliance Smart,1971.05
+2025-03-18,16:35:40,Cash,Entertainment,Movies,Reliance Smart,1874.14
+2026-01-31,07:04:28,Debit Card,Entertainment,Movies,Amazon,2905.16
+2026-02-05,21:52:17,Credit Card,Shopping,Electronics,Local Store,3766.04
+2025-12-25,08:37:54,UPI,Groceries,Supermarket,Local Store,1175.96
+2025-11-21,00:19:52,Debit Card,Utilities,Internet,Flipkart,1444.48
+2025-02-22,21:31:40,Credit Card,Shopping,Clothes,DMart,240.81
+2025-12-09,13:30:27,Debit Card,Utilities,Mobile Recharge,Amazon,3273.34
+2025-11-22,11:28:15,Cash,Groceries,Vegetables,Zomato,1471.37
+2025-10-21,12:09:08,Credit Card,Entertainment,Movies,Swiggy,3112.4
+2025-09-08,03:46:47,UPI,Groceries,Vegetables,Zomato,3789.27
+2025-01-20,17:53:08,UPI,Food,Restaurant,Zomato,2701.1
+2025-12-13,21:20:39,Cash,Utilities,Mobile Recharge,Swiggy,2749.02
+2025-02-02,00:47:35,NetBanking,Entertainment,Streaming,Local Store,2166.29
+2025-01-23,11:49:15,UPI,Food,Cafe,Amazon,3863.53
+2025-04-18,04:38:25,Debit Card,Transport,Train,DMart,1960.43
+2025-01-15,01:45:26,Credit Card,Groceries,Fruits,Amazon,2142.87
+2025-03-09,13:37:42,Credit Card,Groceries,Supermarket,Uber,3896.01
+2025-11-04,00:38:54,UPI,Transport,Train,Ola,4816.35
+2025-04-18,17:15:53,Credit Card,Entertainment,Games,Flipkart,2829.71
+2025-01-21,18:31:18,UPI,Food,Cafe,Reliance Smart,4046.4
+2025-09-28,21:04:39,UPI,Groceries,Vegetables,Uber,301.58
+2026-01-09,14:39:50,Cash,Entertainment,Games,Flipkart,3981.76
+2025-09-26,11:48:39,Credit Card,Food,Cafe,DMart,2958.24
+2025-03-12,01:12:18,Debit Card,Transport,Bus,Ola,1146.46
+2025-04-01,06:12:35,NetBanking,Groceries,Vegetables,Local Store,426.6
+2025-02-11,10:56:45,UPI,Shopping,Accessories,Local Store,3489.79
+2025-05-22,19:36:26,UPI,Entertainment,Streaming,DMart,3972.35
+2025-11-04,01:16:14,Cash,Groceries,Fruits,Zomato,4804.76
+2025-08-28,02:10:35,UPI,Transport,Train,Reliance Smart,1115.2
+2026-01-31,00:21:47,Debit Card,Transport,Fuel,Amazon,4020.59
+2025-07-02,13:43:31,NetBanking,Utilities,Mobile Recharge,Uber,2569.51
+2025-05-25,12:53:15,NetBanking,Utilities,Electricity,Uber,4540.7
+2025-09-24,11:41:59,Credit Card,Groceries,Fruits,Local Store,2986.72
+2025-09-01,04:34:40,NetBanking,Shopping,Clothes,Amazon,2497.84
+2025-09-05,05:05:50,UPI,Groceries,Supermarket,Flipkart,3177.81
+2025-08-05,05:37:17,Cash,Entertainment,Streaming,Zomato,841.17
+2025-11-17,03:02:04,NetBanking,Entertainment,Movies,Reliance Smart,3789.44
+2025-08-03,17:00:21,NetBanking,Entertainment,Streaming,Flipkart,2047.6
+2025-04-08,04:24:45,NetBanking,Shopping,Clothes,Amazon,4191.05
+2025-09-20,06:41:10,NetBanking,Shopping,Electronics,Petrol Pump,4934.04
+2025-07-13,05:02:33,NetBanking,Food,Cafe,Ola,4267.83
+2025-02-05,23:20:18,Credit Card,Utilities,Internet,Amazon,3652.39
+2025-12-04,21:46:08,Debit Card,Entertainment,Streaming,Amazon,3636.01
+2025-03-21,07:10:49,NetBanking,Transport,Fuel,Local Store,4141.18
+2025-03-07,17:33:08,Cash,Groceries,Fruits,Ola,1684.31
+2025-10-05,08:50:42,Cash,Groceries,Supermarket,Zomato,3010.24
+2025-02-21,09:01:52,Debit Card,Shopping,Accessories,Amazon,574.94
+2026-01-31,15:15:23,Cash,Utilities,Internet,Swiggy,4889.05
+2025-03-04,07:51:38,NetBanking,Transport,Taxi,Local Store,3812.29
+2025-07-25,18:29:47,Credit Card,Utilities,Water,Reliance Smart,1415.36
+2025-11-11,13:14:12,UPI,Food,Fast Food,Flipkart,1768.9
+2026-01-09,03:29:21,Credit Card,Entertainment,Games,Zomato,2349.21
+2025-07-14,01:51:17,NetBanking,Transport,Train,Local Store,2356.73
+2025-12-09,23:57:48,Debit Card,Utilities,Mobile Recharge,Local Store,2797.31
+2026-01-29,17:41:01,UPI,Food,Cafe,Uber,2426.86
+2025-02-20,08:12:49,NetBanking,Transport,Train,Flipkart,2050.3
+2025-05-01,05:42:33,UPI,Groceries,Supermarket,Uber,2069.85
+2025-05-17,00:34:38,NetBanking,Utilities,Electricity,DMart,4481.89
+2025-01-13,09:33:49,NetBanking,Utilities,Water,Zomato,2462.75
+2025-09-06,20:40:39,NetBanking,Utilities,Internet,Petrol Pump,3209.78
+2025-11-24,23:33:11,Debit Card,Shopping,Accessories,DMart,2556.9
+2026-01-19,06:43:48,NetBanking,Utilities,Water,Reliance Smart,3168.03
+2025-12-18,12:26:34,UPI,Groceries,Fruits,Local Store,4194.01
+2025-01-28,12:45:33,UPI,Food,Fast Food,Uber,3458.61
+2025-01-05,20:11:13,UPI,Food,Cafe,Zomato,3325.24
+2025-06-06,08:26:45,UPI,Entertainment,Games,Ola,1346.65
+2025-06-09,12:22:10,Debit Card,Transport,Taxi,Local Store,2660.86
+2025-06-09,07:21:07,Debit Card,Food,Fast Food,DMart,1501.28
+2025-06-09,01:40:27,Cash,Entertainment,Streaming,Amazon,4953.82
+2025-10-10,02:37:37,Debit Card,Food,Cafe,Local Store,826.04
+2026-01-31,03:37:21,NetBanking,Utilities,Water,Uber,3197.15
+2025-09-07,11:12:13,NetBanking,Shopping,Accessories,Ola,3225.93
+2025-06-22,22:36:36,UPI,Transport,Fuel,Uber,2282.16
+2025-09-20,12:12:57,Debit Card,Food,Cafe,Swiggy,4163.44
+2025-02-21,19:37:31,NetBanking,Food,Fast Food,Local Store,2602.41
+2025-08-18,06:07:30,Credit Card,Food,Cafe,Ola,3707.52
+2025-04-12,18:52:44,UPI,Utilities,Water,Amazon,453.27
+2025-03-08,11:29:45,NetBanking,Entertainment,Games,Reliance Smart,920.92
+2025-04-24,04:15:00,Cash,Utilities,Water,Uber,4449.25
+2025-02-05,15:15:37,Cash,Entertainment,Streaming,Amazon,1629.96
+2025-08-09,19:47:06,UPI,Groceries,Supermarket,Petrol Pump,1073.36
+2025-01-27,00:21:52,Cash,Groceries,Vegetables,Flipkart,2314.7
+2025-06-21,03:34:29,Credit Card,Groceries,Supermarket,Swiggy,4265.69
+2025-12-29,03:05:13,UPI,Food,Restaurant,Flipkart,3219.84
+2025-03-16,11:31:19,UPI,Shopping,Accessories,Reliance Smart,2184.86
+2026-01-29,01:08:32,Cash,Transport,Fuel,Amazon,4581.14
+2025-04-29,15:23:31,UPI,Entertainment,Movies,Zomato,3581.36
+2025-01-13,15:28:19,Debit Card,Groceries,Vegetables,Petrol Pump,4246.87
+2025-11-22,23:00:33,Credit Card,Shopping,Accessories,Uber,1690.86
+2025-12-16,04:54:39,Credit Card,Entertainment,Games,Amazon,4991.75
+2025-04-27,12:51:30,NetBanking,Groceries,Fruits,Swiggy,2882.56
+2025-03-30,02:40:19,Debit Card,Transport,Taxi,Reliance Smart,3895.34
+2025-12-11,16:02:43,Debit Card,Utilities,Water,Local Store,1126.72
+2025-01-16,02:38:28,Debit Card,Groceries,Vegetables,Ola,4150.61
+2025-06-29,19:13:15,UPI,Transport,Taxi,DMart,79.11
+2025-07-22,06:52:25,UPI,Groceries,Supermarket,Zomato,3676.95
+2025-12-07,02:23:26,UPI,Utilities,Internet,Reliance Smart,1632.93
+2025-09-14,14:42:34,NetBanking,Utilities,Mobile Recharge,Zomato,4625.06
+2025-08-10,18:21:18,Credit Card,Groceries,Fruits,Local Store,686.15
+2026-01-27,00:55:25,NetBanking,Food,Cafe,Flipkart,3272.07
+2025-01-22,14:28:32,Credit Card,Entertainment,Games,Zomato,3394.0
+2025-01-18,15:53:55,Credit Card,Entertainment,Streaming,Reliance Smart,1552.01
+2026-01-01,12:48:11,Debit Card,Food,Fast Food,DMart,4462.05
+2025-05-07,02:57:49,Credit Card,Groceries,Supermarket,Amazon,3852.16
+2025-05-23,11:19:08,Debit Card,Groceries,Vegetables,Uber,2565.52
+2025-08-11,22:38:54,Debit Card,Utilities,Water,Swiggy,2810.99
+2025-10-25,17:34:56,NetBanking,Entertainment,Movies,Zomato,1749.94
+2025-11-04,19:18:57,Debit Card,Entertainment,Movies,Amazon,1587.58
+2025-04-29,05:17:29,UPI,Utilities,Mobile Recharge,Zomato,3696.43
+2025-05-20,20:07:29,Cash,Utilities,Internet,Amazon,4668.04
+2025-10-06,08:18:55,Credit Card,Food,Cafe,Flipkart,1199.74
+2025-09-04,14:06:10,Cash,Groceries,Supermarket,Petrol Pump,3497.79
+2025-08-04,21:28:24,Cash,Shopping,Accessories,Ola,4344.25
+2025-04-03,01:46:16,NetBanking,Entertainment,Movies,DMart,677.69
+2025-12-16,13:57:07,Debit Card,Groceries,Vegetables,Amazon,4659.76
+2025-11-20,12:29:21,Cash,Transport,Bus,Flipkart,1835.03
+2025-07-23,06:06:08,Credit Card,Transport,Fuel,DMart,2084.84
+2025-12-13,15:42:52,Debit Card,Transport,Bus,Flipkart,4010.74
+2025-08-23,15:27:26,NetBanking,Groceries,Fruits,Zomato,4144.75
+2025-02-25,17:35:27,Debit Card,Food,Restaurant,Reliance Smart,632.16
+2025-09-22,04:11:05,Debit Card,Food,Fast Food,Flipkart,1469.34
+2026-01-10,22:23:25,NetBanking,Groceries,Vegetables,Swiggy,4712.51
+2026-01-23,23:50:06,Credit Card,Shopping,Electronics,Reliance Smart,4600.67
+2025-03-01,22:00:48,Credit Card,Utilities,Internet,Flipkart,2347.41
+2025-12-25,22:37:50,UPI,Food,Restaurant,Petrol Pump,3208.0
+2025-07-08,06:43:11,Debit Card,Food,Restaurant,Amazon,3918.73
+2025-01-19,18:45:45,Cash,Shopping,Electronics,Zomato,755.99
+2025-05-06,13:47:19,Debit Card,Entertainment,Games,Flipkart,4646.05
+2025-06-04,05:06:18,NetBanking,Entertainment,Games,DMart,4527.49
+2025-03-12,12:39:30,Debit Card,Utilities,Water,Flipkart,3767.95
+2025-12-26,04:47:48,NetBanking,Utilities,Water,Local Store,590.55
+2025-09-01,11:28:27,Credit Card,Entertainment,Streaming,Uber,2903.97
+2025-02-23,09:17:27,NetBanking,Transport,Train,Swiggy,248.21
+2025-03-07,00:54:47,Cash,Food,Fast Food,Zomato,2658.97
+2025-09-30,07:00:26,UPI,Transport,Train,Swiggy,213.51
+2025-04-15,08:12:10,NetBanking,Food,Restaurant,Amazon,955.93
+2026-02-04,00:49:39,NetBanking,Utilities,Internet,Local Store,3580.08
+2025-10-20,09:42:21,Cash,Transport,Taxi,Amazon,4213.99
+2025-04-19,02:12:36,Cash,Entertainment,Movies,Uber,2401.27
+2025-03-18,11:16:09,NetBanking,Utilities,Water,Ola,1936.62
+2025-07-14,10:58:45,Cash,Entertainment,Movies,Amazon,4765.08
+2025-12-10,13:12:45,NetBanking,Groceries,Vegetables,Reliance Smart,3371.66
+2025-09-15,20:16:23,Debit Card,Entertainment,Games,Local Store,2148.72
+2025-01-31,13:35:57,UPI,Entertainment,Games,Uber,489.33
+2025-11-08,16:00:27,Cash,Food,Restaurant,Uber,3372.71
+2025-03-28,18:07:30,Cash,Shopping,Clothes,Flipkart,4311.9
+2025-01-01,19:58:23,NetBanking,Utilities,Electricity,Flipkart,4410.84
+2025-05-03,15:50:10,NetBanking,Entertainment,Streaming,Ola,3659.08
+2025-08-18,01:56:18,Credit Card,Groceries,Vegetables,Ola,1547.32
+2025-11-29,22:36:40,Cash,Transport,Taxi,Zomato,2399.2
+2025-12-25,08:52:58,Debit Card,Food,Fast Food,Petrol Pump,518.43
+2025-07-29,04:16:34,NetBanking,Food,Fast Food,Amazon,2607.94
+2025-02-03,12:22:03,UPI,Groceries,Vegetables,Petrol Pump,1647.14
+2025-01-27,21:26:45,UPI,Entertainment,Streaming,DMart,3272.8
+2025-02-24,20:02:38,Credit Card,Food,Cafe,Flipkart,3943.11
+2025-11-20,06:59:39,NetBanking,Entertainment,Streaming,Zomato,3823.78
+2026-01-06,12:21:47,Debit Card,Utilities,Internet,Reliance Smart,4894.77
+2025-05-09,20:04:56,Debit Card,Shopping,Accessories,Uber,2139.76
+2025-08-08,22:28:05,UPI,Shopping,Accessories,Zomato,160.79
+2025-12-08,22:18:05,NetBanking,Shopping,Electronics,Amazon,3057.81
+2025-01-28,07:36:57,Debit Card,Shopping,Electronics,Amazon,4744.92
+2025-09-25,14:50:09,Credit Card,Food,Cafe,Amazon,608.02
+2026-01-31,08:21:21,Cash,Food,Fast Food,Zomato,4436.91
+2025-04-21,06:29:54,Cash,Utilities,Electricity,Amazon,3013.57
+2026-01-28,03:58:28,Debit Card,Entertainment,Games,Petrol Pump,2317.09
